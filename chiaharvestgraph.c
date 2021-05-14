@@ -17,6 +17,9 @@
 #include <error.h>
 #include <string.h>
 #include <termios.h>
+#include <sys/stat.h>   // stat
+#include <stdbool.h>    // bool type
+#include <pwd.h>
 
 #include "grapher.h"
 #include "colourmaps.h"
@@ -429,19 +432,38 @@ static void enableRawMode()
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
 
-
+bool file_exists (const char *filename) {
+    struct stat buffer;
+    int result = stat(filename, &buffer);
+    return result == 0;
+}
 int main(int argc, char *argv[])
 {
-	const char* dirname = 0;
+    const char *dirname;
+
+    if ((dirname = getenv("HOME")) == NULL) {
+        dirname = getpwuid(getuid())->pw_dir;
+    }
+
+    strcat(dirname,"/.chia/mainnet/log");
 
 	if (argc != 2)
 	{
-		fprintf( stderr, "Usage: %s ~/.chia/mainet/log\n", argv[0] );
-		exit( 1 );
+            char *filePath = malloc(strlen(dirname) + strlen("/debug.log") + 1);
+            strcpy(filePath, dirname);
+            strcat(filePath, "/debug.log");
+	    if(!file_exists(filePath)){
+                 fprintf( stderr, "Usage: %s ~/.chia/mainnet/log\n", argv[0] );
+                 exit( 1 );
+	    }
+	    else
+	    {
+        	 free(filePath);
+            }
 	}
 	else
 	{
-		dirname = argv[ 1 ];
+              strcpy(dirname,argv[1]);
 	}
 	fprintf( stderr, "Monitoring directory %s\n", dirname );
 

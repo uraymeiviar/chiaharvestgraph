@@ -1,5 +1,5 @@
 CC ?= cc
-CFLAGS +=  -D_POSIX_C_SOURCE=200809L -std=c99 -Wall -Wno-missing-braces -g
+CFLAGS += -I/usr/include -D_POSIX_C_SOURCE=200809L -std=c99 -Wall -Wno-missing-braces -O2 -static
 LDFLAGS +=
 
 TARGET = chiaharvestgraph

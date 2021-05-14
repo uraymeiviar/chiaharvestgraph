@@ -10,3 +10,4 @@ chiaharvestgraph
 # Debug files
 *.dSYM/
 
+.idea
